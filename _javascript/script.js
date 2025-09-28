@@ -18,8 +18,10 @@ const root = document.documentElement;
 const clouds = document.querySelector('.clouds');
 const starLayer = document.querySelector('#star-layer');
 const infernoBackground = document.querySelector("#inferno-background");
-const spriteMorteTemporario = './_media/napstablookMorte.gif';
 const passioneScreen = document.querySelector('#passioneScreen');
+const chao1 = document.querySelector("#img1");
+const chao2 = document.querySelector("#img2");
+const chao3 = document.querySelector("#img3");
 
 /* =========================================
    ELEMENTOS DA TELA INICIAL
@@ -38,7 +40,7 @@ const startButton = document.querySelector('#start-button');
    definição de imagens padrão para o jogo.
 */
 var musicaMario = new Audio('./_media/_sons/trilhasonoramario.mp3');
-const jumpSound = new Audio('./_media/_sons/jump.mp3');
+
 const selectSound = new Audio('./_media/_sons/undertale-select.mp3');
 const coinSound = new Audio('./_media/_sons/coin-audio.mp3');
 var localGameOver = './_imagens/morte/game-over-mario.png';
@@ -49,6 +51,7 @@ var localGameOver = './_imagens/morte/game-over-mario.png';
    Variáveis que controlam o estado atual do
    jogo, como pontuação, vidas, pausa, etc.
 */
+var inicio = false
 let pausa = false;
 let estaInvuneravel = false;
 var vida = 3;
@@ -59,6 +62,7 @@ let playerNick = '';
 let loop;
 let scoreInterval;
 let personagemSelecionadoId = 'marioDiv';
+var spriteMorteTemporario = './_media/napstablookMorte.gif';
 
 /* =========================================
    FLAGS DE CONTROLE DE TEMA
@@ -100,8 +104,9 @@ function atualizarVidas() {
 const jump = () => {
     if (!mario.classList.contains('jump')) {
         mario.classList.add('jump');
-        jumpSound.play();
-        setTimeout(() => mario.classList.remove('jump'), 500);
+        if (inicio == true)
+
+            setTimeout(() => mario.classList.remove('jump'), 700);
     }
 }
 
@@ -132,63 +137,6 @@ function ativarInvunerabilidade() {
     }, 500);
 }
 
-/**
- * Envia a pontuação final para o servidor via PHP.
- */
-function salvarPontuacao(nomeJogador, pontuacaoFinal) {
-    const dados = { name: nomeJogador, score: pontuacaoFinal };
-    fetch('./_php/salvar_pontuacao.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados),
-    })
-        .then(response => response.ok ? response.json() : Promise.reject(response))
-        .then(data => console.log('Resposta do PHP:', data.message))
-        .catch((error) => console.error('Ocorreu um erro na comunicação:', error));
-}
-
-/* =========================================
-   SISTEMA DE CÓDIGOS SECRETOS (EASTER EGGS)
-   =========================================
-   Lógica para detectar sequências de teclas
-   e ativar efeitos especiais no jogo.
-*/
-const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-const robertoCode = ['r', 'o', 'b', 'e', 'r', 't', 'o'];
-const palmeirasCode = ['p', 'a', 'l', 'm', 'e', 'i', 'r', 'a', 's'];
-const sonicCode = ['s', 'o', 'n', 'i', 'c'];
-
-function checarCodigo(sequencia, evento) {
-    let position = 0;
-    return function (key) {
-        if (key === sequencia[position]) {
-            position++;
-            if (position === sequencia.length) {
-                evento();
-                position = 0;
-            }
-        } else {
-            position = (key === sequencia[0]) ? 1 : 0;
-        }
-    }
-}
-
-const checkKonami = checarCodigo(konamiCode, () => {
-    mario.src = './_media/wario.gif';
-    mario.style.transform = 'scaleX(-1)';
-});
-const checkRoberto = checarCodigo(robertoCode, () => {
-    mario.src = './_imagens/image.png';
-    mario.style.transform = 'scaleX(1)';
-});
-const checkPalmeiras = checarCodigo(palmeirasCode, () => {
-    mario.src = './_imagens/matheus.png';
-    mario.style.transform = 'scaleX(1)';
-});
-const checkSonic = checarCodigo(sonicCode, () => {
-    mario.src = './_media/sonic.gif';
-    mario.style.transform = 'scaleX(1)';
-});
 
 /* =========================================
    FUNÇÕES DE EFEITOS VISUAIS
@@ -212,10 +160,14 @@ function criarBrasa() {
    pontuação e de colisão.
 */
 function startGame() {
+    
+    inicio = true
+    mario.style.display = "block"
     telaInicial.style.display = 'none';
     pipe.style.animationPlayState = 'running';
     root.style.setProperty('--velocidade', `2.0s`);
     atualizarVidas();
+    bmo()
 
     scoreInterval = setInterval(() => {
         if (!pausa) score++;
@@ -331,7 +283,9 @@ function startGame() {
    como pressionar teclas ou clicar em botões.
 */
 document.addEventListener('keydown', (event) => {
-    jump();
+    if (event.keyCode === 32) {
+        jump();
+    }
     checkKonami(event.key);
     checkRoberto(event.key);
     checkPalmeiras(event.key);
@@ -369,44 +323,40 @@ function escolhaPersonagem(personagem) {
         personagemSelecionadoId = `${personagem}Div`;
     }
 
-    let marioGifPath = './_media/mario.gif';
+    let marioGifPath = '';
     let gameOverImagePath = `./_imagens/morte/game-over-mario.png`;
     let mudarDirecao = false;
+    let chaoGifPath = "";
 
     switch (personagem) {
         case 'mario':
             marioGifPath = './_media/mario.gif';
-            gameOverImagePath = `./_imagens/morte/game-over-mario.png`;
+            gameOverImagePath = './_imagens/morte/game-over-mario.png';
+            chaoGifPath = '/_imagens/chãoMario.png';
+            mario.style.width = '150px'
             break;
         case 'sonic':
             marioGifPath = './_media/sonic.gif';
-            gameOverImagePath = `./_imagens/morte/game-over-sonic.png`;
+            gameOverImagePath = './_imagens/morte/game-over-sonic.png';
+            chaoGifPath = '/_imagens/chaoSonic.png';
+            mario.style.width = '150px'
             break;
-        case 'megaman':
-            marioGifPath = './_media/yd6sCid.gif';
-            gameOverImagePath = `./_imagens/morte/game-over-megaman.png`;
+        case 'dexter':
+            marioGifPath = '_imagens/Dexter.gif';
+            gameOverImagePath = './_imagens/morte/Dexter Morte.png';
+            chaoGifPath = '/_imagens/chaoDexter.png';
+            mario.style.width = '250px'
             break;
-        case 'link':
-            marioGifPath = './_media/link.gif';
-            gameOverImagePath = `./_imagens/morte/game-over-link.png`;
+        case 'florzinha':
+            marioGifPath = '_imagens/Florzinha.gif';
+            gameOverImagePath = '_imagens/morte/Florzinha morte.png';
+            chaoGifPath = '_imagens/ChãoMeninas.png';
+            mario.style.width = '220px'
             break;
         case 'goku':
             marioGifPath = './_media/goku.gif';
-            gameOverImagePath = `./_imagens/morte/game-over-goku.png`;
-            break;
-        case 'jotaro':
-            marioGifPath = './_media/jotaroA.gif';
-            gameOverImagePath = `./_imagens/morte/game-over-jotaro.gif`;
-            break;
-        case 'hollow':
-            marioGifPath = './_media/hollow.gif';
-            gameOverImagePath = `./_imagens/morte/game-over-hollow.png`;
-            mudarDirecao = true;
-            break;
-        case 'hornet':
-            marioGifPath = './_media/hornet.gif';
-            gameOverImagePath = `./_imagens/morte/game-over-hornet.png`;
-            mudarDirecao = true;
+            gameOverImagePath = './_imagens/morte/game-over-goku.png';
+            mario.style.width = '150px'
             break;
         default:
             console.warn(`Personagem '${personagem}' não reconhecido. Usando Mario padrão.`);
@@ -414,20 +364,26 @@ function escolhaPersonagem(personagem) {
     }
 
     mario.src = marioGifPath;
-    localGameOver = gameOverImagePath;
+    spriteMorteTemporario = gameOverImagePath;
     mario.style.transform = mudarDirecao ? 'scaleX(-1)' : 'scaleX(1)';
+    chao1.src = chaoGifPath;
+    chao2.src = chaoGifPath;
+    chao3.src = chaoGifPath;
 }
 
 function continuarReniciar(escolha) {
     if (escolha === 'continuar') {
         jogarDenovoScreen.style.display = 'none';
+        // cano volta para o lugar
         pipe.style.right = '-80px';
         pipe.style.left = '';
         pipe.style.animationPlayState = 'running';
+        // bala reinicia
         bullet.style.right = '-80px';
         bullet.style.left = '';
         bullet.style.animationPlayState = 'running';
         pausa = false;
+        // ativa a invulnerabilidade
         ativarInvunerabilidade();
         escolhaPersonagem(personagemSelecionadoId.replace('Div', ''));
 
@@ -437,10 +393,13 @@ function continuarReniciar(escolha) {
 }
 
 function morrer(pipePosition, bulletPosition, marioPosition) {
+    // cano para
     pipe.style.animation = "none";
     pipe.style.left = `${pipePosition}px`;
+    // bala para
     bullet.style.animation = "none";
     bullet.style.left = `${bulletPosition}px`;
+    // mario para
     mario.style.animation = "none";
     mario.style.bottom = `${marioPosition}px`;
     mario.src = localGameOver;
@@ -493,3 +452,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setTimeout(finishStartup, startupDisplayTime);
 });
+// funcao mexer o chao
+let chaoDisaparece = document.querySelector("#img1")
+let chaoDisaparece2 = document.querySelector("#img3")
+
+chaoDisaparece.style.display = "block"
+function disaparece() {
+    setTimeout(() => {
+        chaoDisaparece.style.display = "none"
+    }, 2975);
+    setTimeout(() => {
+        chaoDisaparece2.style.opacity = "100"
+    }, 2975);
+}
+disaparece()
+
+function bmo() {
+    if (playerNick == "papai") {
+        marioGifPath = '_imagens/Bmo.gif';
+        gameOverImagePath = './_imagens/morte/Bmo Morte.png';
+        chaoGifPath = '/_imagens/chaoHoraDeAventura.png';
+        mario.style.width = '250px'
+        mario.src = marioGifPath;
+        spriteMorteTemporario = gameOverImagePath;
+        chao1.src = chaoGifPath;
+        chao2.src = chaoGifPath;
+        chao3.src = chaoGifPath;
+        musicaMario = new Audio('./_media/_sons/HoraDeAventura.mp3')
+    }
+
+}
