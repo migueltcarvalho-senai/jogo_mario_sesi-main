@@ -22,6 +22,8 @@ const passioneScreen = document.querySelector('#passioneScreen');
 const chao1 = document.querySelector("#img1");
 const chao2 = document.querySelector("#img2");
 const chao3 = document.querySelector("#img3");
+var contadorMoeda = 0
+let numeroAleatorio
 
 /* =========================================
    ELEMENTOS DA TELA INICIAL
@@ -39,7 +41,8 @@ const startButton = document.querySelector('#start-button');
    Pré-carregamento dos arquivos de áudio e
    definição de imagens padrão para o jogo.
 */
-var musicaMario = new Audio('./_media/_sons/trilhasonoramario.mp3');
+var marioGifPath = ""
+var denovo = false
 
 const selectSound = new Audio('./_media/_sons/undertale-select.mp3');
 const coinSound = new Audio('./_media/_sons/coin-audio.mp3');
@@ -102,13 +105,15 @@ function atualizarVidas() {
  * Controla a ação de pulo do personagem.
  */
 const jump = () => {
-    if (!mario.classList.contains('jump')) {
+    if (!mario.classList.contains(".jump")) {
         mario.classList.add('jump');
-        if (inicio == true)
-
+        if (inicio == true) {
             setTimeout(() => mario.classList.remove('jump'), 700);
+        }
+
     }
 }
+
 
 /**
  * Chamada quando o jogador colide com um obstáculo.
@@ -137,6 +142,16 @@ function ativarInvunerabilidade() {
     }, 500);
 }
 
+// buff invulnerabilidade do powerup estrela
+function BuffInvulnerabilidade() {
+    estaInvuneravel = true;
+    mario.classList.add('animacao-estrela');
+    setTimeout(() => {
+        estaInvuneravel = false;
+        mario.classList.remove('animacao-estrela');
+    }, 5000);
+}
+
 
 /* =========================================
    FUNÇÕES DE EFEITOS VISUAIS
@@ -160,7 +175,7 @@ function criarBrasa() {
    pontuação e de colisão.
 */
 function startGame() {
-    
+
     inicio = true
     mario.style.display = "block"
     telaInicial.style.display = 'none';
@@ -175,7 +190,7 @@ function startGame() {
 
         // AUMENTO PROGRESSIVO DE VELOCIDADE
         if (score % 1 === 0 && score > 0 && !infernoAtivado && !pausa) {
-            let velocidadeAtual = parseFloat(getComputedStyle(root).getPropertyValue('--velocidade'));
+            var velocidadeAtual = parseFloat(getComputedStyle(root).getPropertyValue('--velocidade'));
             if (velocidadeAtual > 1.5) {
                 let novaVelocidade = Math.max(1.5, velocidadeAtual - 0.001);
                 root.style.setProperty('--velocidade', `${novaVelocidade.toFixed(3)}s`);
@@ -249,6 +264,7 @@ function startGame() {
                 coinSound.play();
                 score += 10;
                 moedasColetadas++;
+                contadorMoeda++;
                 if (moedasColetadas % 10 === 0 && moedasColetadas > 0) {
                     vida++;
                     atualizarVidas();
@@ -286,10 +302,6 @@ document.addEventListener('keydown', (event) => {
     if (event.keyCode === 32) {
         jump();
     }
-    checkKonami(event.key);
-    checkRoberto(event.key);
-    checkPalmeiras(event.key);
-    checkSonic(event.key);
 });
 
 startButton.addEventListener('click', () => {
@@ -322,20 +334,20 @@ function escolhaPersonagem(personagem) {
         novaSelecaoDiv.classList.add('selecionado');
         personagemSelecionadoId = `${personagem}Div`;
     }
-
-    let marioGifPath = '';
-    let gameOverImagePath = `./_imagens/morte/game-over-mario.png`;
-    let mudarDirecao = false;
-    let chaoGifPath = "";
+    var gameOverImagePath = `./_imagens/morte/game-over-mario.png`;
+    mudarDirecao = false;
+    var chaoGifPath = "";
 
     switch (personagem) {
         case 'mario':
+            musicaMario = new Audio('./_media/_sons/MarioMusica.mp3')
             marioGifPath = './_media/mario.gif';
             gameOverImagePath = './_imagens/morte/game-over-mario.png';
             chaoGifPath = '/_imagens/chãoMario.png';
             mario.style.width = '150px'
             break;
         case 'sonic':
+            musicaMario = new Audio('./_media/_sons/SonicMusica.mp3')
             marioGifPath = './_media/sonic.gif';
             gameOverImagePath = './_imagens/morte/game-over-sonic.png';
             chaoGifPath = '/_imagens/chaoSonic.png';
@@ -353,9 +365,11 @@ function escolhaPersonagem(personagem) {
             chaoGifPath = '_imagens/ChãoMeninas.png';
             mario.style.width = '220px'
             break;
-        case 'goku':
-            marioGifPath = './_media/goku.gif';
-            gameOverImagePath = './_imagens/morte/game-over-goku.png';
+        case 'osso':
+            musicaMario = new Audio('./_media/_sons/PuroOsso.mp3')
+            marioGifPath = './_imagens/Puro osso.gif';
+            gameOverImagePath = './_imagens/morte/Puro osso morte.png';
+            chaoGifPath = '_imagens/Chão puro osso.png';
             mario.style.width = '150px'
             break;
         default:
@@ -373,6 +387,7 @@ function escolhaPersonagem(personagem) {
 
 function continuarReniciar(escolha) {
     if (escolha === 'continuar') {
+
         jogarDenovoScreen.style.display = 'none';
         // cano volta para o lugar
         pipe.style.right = '-80px';
@@ -385,7 +400,7 @@ function continuarReniciar(escolha) {
         pausa = false;
         // ativa a invulnerabilidade
         ativarInvunerabilidade();
-        escolhaPersonagem(personagemSelecionadoId.replace('Div', ''));
+        mario.src = marioGifPath;
 
     } else if (escolha === 'Reniciar') {
         window.location.reload();
@@ -409,7 +424,6 @@ function morrer(pipePosition, bulletPosition, marioPosition) {
     clearInterval(loop);
     clearInterval(scoreInterval);
     finalScoreElement.textContent = score;
-    musicaMario.pause();
     salvarPontuacao(playerNick, score);
 }
 
@@ -482,3 +496,6 @@ function bmo() {
     }
 
 }
+;
+
+

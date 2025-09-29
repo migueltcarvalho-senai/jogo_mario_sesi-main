@@ -102,6 +102,7 @@ body {
     /* No chão */
     z-index: 1;
     /* Acima do fundo */
+    animation: none
 }
 
 .jump {
@@ -828,6 +829,17 @@ body {
     background-size: cover;
     background-position: bottom;
 }
+#ossoDiv{
+    transition: 0.25s;
+}
+#ossoDiv:hover{
+    border-color: rgb(63, 11, 94);
+    transition: 0.25s;
+    box-shadow: 0px 0px 21px rgb(63, 11, 94);
+    background-image: url(/_imagens/ossoFundo.jpg);
+    background-size: cover;
+    background-position: bottom;
+}
 
 .cenario{
     width: 100%;
@@ -872,5 +884,30 @@ body {
 
     to {
         right: 100%;
+    }
+}
+
+
+.animacao-estrela{
+    animation: piscar-estrela 1s linear infinite;
+
+
+}
+@keyframes piscar-estrela{
+    0%{
+        filter: saturate(0);
+    }
+    20%{
+        filter: saturate(5)
+    }
+    40%{
+        filter: saturate(10)
+    }
+    60%{
+
+        filter: saturate(5)
+    }
+    100%{
+        filter: saturate(0)
     }
 }
