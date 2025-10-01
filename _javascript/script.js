@@ -343,7 +343,7 @@ function escolhaPersonagem(personagem) {
 
     switch (personagem) {
         case 'mario':
-            musicaMario = new Audio('./_media/_sons/MarioMusica.mp3')
+            musicaMario = new Audio('./_media/_sons/faseSons/MarioMusica.mp3')
             marioGifPath = './_imagens/newMario.gif';
             gameOverImagePath = './_imagens/morte/game-over-mario.png';
             chaoGifPath = '/_imagens/chãoMario.png';
@@ -351,7 +351,7 @@ function escolhaPersonagem(personagem) {
             fundo.src = 'none'
             break;
         case 'sonic':
-            musicaMario = new Audio('./_media/_sons/SonicMusica.mp3')
+            musicaMario = new Audio('./_media/_sons/faseSons/SonicMusica.mp3')
             marioGifPath = './_imagens/sonic-run.gif';
             gameOverImagePath = './_imagens/morte/game-over-sonic.png';
             chaoGifPath = '/_imagens/chaoSonic.png';
@@ -370,10 +370,11 @@ function escolhaPersonagem(personagem) {
             gameOverImagePath = '_imagens/morte/Florzinha morte.png';
             chaoGifPath = '_imagens/ChãoMeninas.png';
             mario.style.width = '220px'
-            fundo.src = 'none'
+            fundo.src = '_imagens/fundos/PowerFundo.png'
+            gameBoard.style.background = 'linear-gradient( #1f6986, #69b4d1, #a7e5fd  )'
             break;
         case 'osso':
-            musicaMario = new Audio('./_media/_sons/PuroOsso.mp3')
+            musicaMario = new Audio('./_media/_sons/faseSons/PuroOsso.mp3')
             marioGifPath = './_imagens/Puro osso.gif';
             gameOverImagePath = './_imagens/morte/Puro osso morte.png';
             chaoGifPath = '_imagens/Chão puro osso.png';
