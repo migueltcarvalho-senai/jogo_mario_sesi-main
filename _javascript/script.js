@@ -22,6 +22,7 @@ const passioneScreen = document.querySelector('#passioneScreen');
 const chao1 = document.querySelector("#img1");
 const chao2 = document.querySelector("#img2");
 const chao3 = document.querySelector("#img3");
+const fundo = document.querySelector('.fundo-gif')
 var contadorMoeda = 0
 let numeroAleatorio
 
@@ -34,6 +35,7 @@ let numeroAleatorio
 const telaInicial = document.querySelector('.tela-Inicial');
 const nicknameInput = document.querySelector('#nickname');
 const startButton = document.querySelector('#start-button');
+
 
 /* =========================================
    RECURSOS DE ÁUDIO E IMAGENS PADRÃO
@@ -178,6 +180,7 @@ function startGame() {
 
     inicio = true
     mario.style.display = "block"
+    fundo.style.display = "block"
     telaInicial.style.display = 'none';
     pipe.style.animationPlayState = 'running';
     root.style.setProperty('--velocidade', `2.0s`);
@@ -341,29 +344,33 @@ function escolhaPersonagem(personagem) {
     switch (personagem) {
         case 'mario':
             musicaMario = new Audio('./_media/_sons/MarioMusica.mp3')
-            marioGifPath = './_media/mario.gif';
+            marioGifPath = './_imagens/newMario.gif';
             gameOverImagePath = './_imagens/morte/game-over-mario.png';
             chaoGifPath = '/_imagens/chãoMario.png';
-            mario.style.width = '150px'
+            mario.style.width = '200px'
+            fundo.src = 'none'
             break;
         case 'sonic':
             musicaMario = new Audio('./_media/_sons/SonicMusica.mp3')
-            marioGifPath = './_media/sonic.gif';
+            marioGifPath = './_imagens/sonic-run.gif';
             gameOverImagePath = './_imagens/morte/game-over-sonic.png';
             chaoGifPath = '/_imagens/chaoSonic.png';
             mario.style.width = '150px'
+            fundo.src = '_none'
             break;
         case 'dexter':
             marioGifPath = '_imagens/Dexter.gif';
             gameOverImagePath = './_imagens/morte/Dexter Morte.png';
             chaoGifPath = '/_imagens/chaoDexter.png';
             mario.style.width = '250px'
+            fundo.src = 'none'
             break;
         case 'florzinha':
             marioGifPath = '_imagens/Florzinha.gif';
             gameOverImagePath = '_imagens/morte/Florzinha morte.png';
             chaoGifPath = '_imagens/ChãoMeninas.png';
             mario.style.width = '220px'
+            fundo.src = 'none'
             break;
         case 'osso':
             musicaMario = new Audio('./_media/_sons/PuroOsso.mp3')
@@ -371,6 +378,8 @@ function escolhaPersonagem(personagem) {
             gameOverImagePath = './_imagens/morte/Puro osso morte.png';
             chaoGifPath = '_imagens/Chão puro osso.png';
             mario.style.width = '150px'
+            fundo.src = '_imagens/fundos/Puro osso.png'
+            gameBoard.style.background = " linear-gradient( #065e35, #023020, #000000)"
             break;
         default:
             console.warn(`Personagem '${personagem}' não reconhecido. Usando Mario padrão.`);
